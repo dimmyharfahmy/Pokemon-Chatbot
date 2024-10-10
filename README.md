@@ -11,6 +11,18 @@ This project is a chatbot built using the Kata.ai platform to provide Pokémon i
 
 ## Setup Instructions
 
+## Bot Deployment
+
+The chatbot is deployed on Telegram and can be accessed using the following link:
+
+[@pokeballsee_bot](https://t.me/pokeballsee_bot)
+
+### Interacting with the Bot
+
+1. Open Telegram and search for [@pokeballsee_bot](https://t.me/pokeballsee_bot).
+2. Type `/start` to begin the conversation.
+3. Follow the prompts to get Pokémon information, such as sending "Pokemon information" and then the name of the Pokémon (e.g., "Pikachu").
+
 ### Prerequisites
 - Kata.ai platform account.
 - A Telegram account and a bot token obtained from **BotFather**.
