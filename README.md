@@ -19,7 +19,7 @@ The chatbot is deployed on Telegram and can be accessed using the following link
 
 1. Open Telegram and search for [@pokeballsee_bot](https://t.me/pokeballsee_bot).
 2. Type `/start` to begin the conversation.
-3. Follow the prompts to get Pokémon information, such as sending "Pokemon information" and then the name of the Pokémon (e.g., "Pikachu").
+3. Follow the prompts to get Pokémon information, such as sending "pokemon information" and then the name of the Pokémon (e.g., "Pikachu").
 
 ## Setup Instructions
 
