@@ -1,0 +1,250 @@
+id: bbee7bb2-520d-4f75-987e-5104083d9d7b
+revision: 2506822707043ecfb6d674159dc5b4e3459a7926
+name: dimmySEE
+tag: latest
+deleted_at: null
+desc: 'Task for Software Engineer Enterprise'
+timezone: 7
+flows:
+    SEE_chatbot:
+        active: true
+        volatile: false
+        intents:
+            start_intent:
+                type: text
+                initial: true
+                fallback: false
+                condition: 'content == "Hello" || content == "/start"'
+            name_intent:
+                type: text
+                initial: false
+                fallback: false
+                condition: 'content != ""'
+            yes:
+                type: text
+                initial: false
+                fallback: false
+                classifier:
+                    nlu: yesno
+                    match: yes
+            pokinfo:
+                type: text
+                initial: true
+                fallback: false
+                priority: -1
+                condition: 'content == "Pokemon information"'
+            retreivePokemon:
+                type: text
+                initial: false
+                fallback: false
+                classifier:
+                    nlu: nameNumber
+            no:
+                type: text
+                initial: false
+                fallback: false
+                classifier:
+                    nlu: yesno
+                    match: No
+            reenter:
+                type: command
+                initial: false
+                fallback: false
+                condition: 'content=="reenter"'
+        states:
+            init:
+                transitions:
+                    ask_name_state:
+                        condition: 'intent == "start_intent"'
+                initial: true
+            ask_name_state:
+                transitions:
+                    confirm_name_state:
+                        condition: 'intent == "name_intent"'
+                        mapping:
+                            data.confirm: 'null'
+                    ask_name_state:
+                        fallback: true
+                action: ask_name_state
+                transit:
+                    data.name: content
+            confirm_name_state:
+                transitions:
+                    pokemonInformation: {}
+                action: confirm_name_state
+                transit:
+                    data.confirm: intent
+            pokemonInformation:
+                transitions: {}
+                action:
+                    -
+                        name: confirmNo
+                        condition: 'content=="no"'
+                    -
+                        name: welcome_state
+                        condition: 'content=="yes"'
+                transit:
+                    data.confirm: intent
+                end: true
+        actions:
+            ask_name_state:
+                type: text
+                options:
+                    text: 'Hello, what''s your name?'
+            confirm_name_state:
+                type: text
+                options:
+                    text: 'So your name is $(data.name)?'
+            welcome_state:
+                type: text
+                options:
+                    text: 'Welcome to PokeBot, $(data.name)! You can send "Pokemon information" to get information about a Pokemon.'
+            ask_pokemon_state:
+                type: text
+                options:
+                    text: 'Which Pokemon do you need the info for?'
+            poketestresult:
+                type: api
+                options:
+                    uri: 'https://pokeapi.co/api/v2/pokemon/$(data.pokemon_name)'
+                    method: GET
+                    isAsync: false
+            pokeresult:
+                type: text
+                options:
+                    text: '$(data.pokemon) is an <$(result.types[0].type.name)> type pokemon with $(result.weight) weight and $(result.height) height. here''''s a picture of $(data.pokemon)'
+            pokeResultNotFound:
+                type: text
+                options:
+                    text: 'Pokemon $(data.pokemon) not found.'
+            ShowPokePicture:
+                type: template
+                options:
+                    type: image
+                    items:
+                        originalContentUrl: $(result.sprites.front_default)
+                        previewImageUrl: $(result.sprites.front_default)
+                        caption: $(data.pokemon)
+            confirmNo:
+                type: text
+                options:
+                    text: 'Okey, Bye!'
+            testing:
+                type: text
+                options:
+                    text: testing
+        methods: {}
+    PokeInfo:
+        active: true
+        volatile: false
+        intents:
+            pokeInfo:
+                type: text
+                initial: true
+                fallback: false
+                condition:
+                    - 'content=="Pokemon information"'
+                    - 'content=="pokemon information"'
+                    - 'content=="pokemoninformation"'
+                    - 'content=="Pokemon Information"'
+            reenter:
+                type: command
+                initial: false
+                fallback: false
+                condition: 'content=="reenter"'
+            retreivePokemon:
+                type: text
+                initial: false
+                fallback: false
+                classifier:
+                    nlu: nameNumber
+            apiResultIntent:
+                type: command
+                initial: true
+                fallback: false
+                condition: 'content==="apiResult"'
+        states:
+            init:
+                transitions:
+                    WhichPoke:
+                        condition: 'intent=="pokeInfo"'
+                initial: true
+            WhichPoke:
+                transitions:
+                    getPoke:
+                        condition: 'intent=="retreivePokemon"'
+                        mapping:
+                            data.pokemon_name: content
+                action: WhichOneSelected
+            getPoke:
+                transitions: {}
+                action:
+                    -
+                        name: fetchAPI
+                    -
+                        name: PokeSuccess
+                        condition: result
+                    -
+                        name: PokeNotFound
+                        condition: '!result'
+                    -
+                        name: ShowPokePicture
+                        condition: result
+                end: true
+        actions:
+            WhichOneSelected:
+                type: text
+                options:
+                    text: 'Which Pokemon do you need the info for?'
+            fetchAPI:
+                type: api
+                options:
+                    uri: 'https://pokeapi.co/api/v2/pokemon/$(data.pokemon_name)'
+                    method: GET
+                    isAsync: false
+            PokeSuccess:
+                type: text
+                options:
+                    text: '$(data.pokemon) is an <$(result.types[0].type.name)> type pokemon with $(result.weight) weight and $(result.height) height. here''''s a picture of $(data.pokemon_name)'
+            PokeNotFound:
+                type: text
+                options:
+                    text: 'Pokemon $(data.pokemon_name) not found.'
+            ShowPokePicture:
+                type: template
+                options:
+                    type: image
+                    items:
+                        originalContentUrl: $(result.sprites.front_default)
+                        previewImageUrl: $(result.sprites.front_default)
+                        caption: $(data.pokemon_name)
+        methods: {}
+nlus:
+    name_intent:
+        type: regex
+        options:
+            regex: '[A-Za-z]+'
+    nameNumber:
+        type: regex
+        options:
+            regex: '^[a-zA-Z0-9\s]+$'
+    yesno:
+        type: keyword
+        options:
+            keywords:
+                yes:
+                    - yes
+                    - ya
+                    - iya
+                    - ok
+                    - benar
+                    - Yes
+                no:
+                    - no
+                    - tida
+                    - bukan
+                    - No
+            default: ""
+            exact: false
+methods: {}
+config: {}
