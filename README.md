@@ -9,8 +9,6 @@ This project is a chatbot built using the Kata.ai platform to provide Pokémon i
 - Fetches and displays Pokémon details such as type, weight, and height from the Pokémon API.
 - Displays an image of the Pokémon.
 
-## Setup Instructions
-
 ## Bot Deployment
 
 The chatbot is deployed on Telegram and can be accessed using the following link:
@@ -22,6 +20,8 @@ The chatbot is deployed on Telegram and can be accessed using the following link
 1. Open Telegram and search for [@pokeballsee_bot](https://t.me/pokeballsee_bot).
 2. Type `/start` to begin the conversation.
 3. Follow the prompts to get Pokémon information, such as sending "Pokemon information" and then the name of the Pokémon (e.g., "Pikachu").
+
+## Setup Instructions
 
 ### Prerequisites
 - Kata.ai platform account.
